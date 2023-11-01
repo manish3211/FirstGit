@@ -25,4 +25,7 @@ var header=document.getElementById('main-header');
 // console.log(headerTitle.innerText);
 // headerTitle.innerHTML='<h3>Hello</h3>';
 
-headerTitle.style.borderBottom='solid 3px #000';
+header.style.borderBottom='solid 3px #000';
+
+document.getElementById('main').style.fontWeight='bold';
+document.getElementById('main').style.color='green';
