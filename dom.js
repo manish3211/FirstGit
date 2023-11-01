@@ -25,17 +25,36 @@ var header=document.getElementById('main-header');
 // console.log(headerTitle.innerText);
 // headerTitle.innerHTML='<h3>Hello</h3>';
 
-header.style.borderBottom='solid 3px #000';
+// header.style.borderBottom='solid 3px #000';
 
 // document.getElementById('main').style.fontWeight='bold';
 // document.getElementById('main').style.color='green';
 
-var items=document.getElementsByClassName('list-group-item');
-items[2].style.backgroundColor='green';
 
-// GIVES ERROR
-// items.style.fontWeight='bold';
+// var items=document.getElementsByClassName('list-group-item');
+// items[2].style.backgroundColor='green';
+
+// // GIVES ERROR
+// // items.style.fontWeight='bold';
+
+// for(var i=0;i<items.length;i++){
+//     items[i].style.fontWeight='bold';
+// }
+
+
+
+
+var items=document.getElementsByClassName('list-group-item');
+items[4].style.backgroundColor='green';
+
 
 for(var i=0;i<items.length;i++){
     items[i].style.fontWeight='bold';
 }
+
+
+
+var li=document.getElementsByTagName('li');
+li[4].style.backgroundColor='green';
+li[4].style.fontWeight='bold';
+li[4].textContent='Hello';
