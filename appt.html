@@ -29,9 +29,8 @@
 
       <ul id="users"></ul>
 
-      <!-- <li>
-        <input type="button" id="delete" value="Delete">
-      </li> -->
+      
+      
       <!-- <ul class="items">
         <li class="item">Item 1</li>
         <li class="item">Item 2</li>
@@ -68,7 +67,20 @@
         function displayUseronScreen(myObject){
             const parentElement=document.getElementById('users')
 
-            parentElement.innerHTML=parentElement.innerHTML + '<li>${myObject.name} - ${myObject.email}</li>'
+            const childElement=document.createElement('li')
+            childElement.textContent=myObject.name+'-'+myObject.email
+
+            
+            var deleteButton=document.createElement('input')
+            deleteButton.type="button"
+            deleteButton.value="Delete"
+            deleteButton.onclick = () => {
+                localStorage.removeItem(myObject.email)
+                parentElement.removeChild(childElement)
+            }
+
+            childElement.appendChild(deleteButton)
+            parentElement.appendChild(childElement)
         }
     </script>
 
