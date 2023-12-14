@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Expense Tracker</h1>
+        <div class="form-group">
+            <label for="expenseInput">Enter Expense:</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="expenseInput" placeholder="Enter expense amount">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" onclick="addExpense()">Add Expense</button>
+                </div>
+            </div>
+        </div>
+        <ul class="list-group" id="expenseList"></ul>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="expensetracker.js"></script>
+</body>
+
+</html>
