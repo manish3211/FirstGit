@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Booking Appointment App</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body onload="getSavedAppointments()">
+    <header>
+        <h1>Booking Appointment App</h1>
+    </header>
+    <section class="container">
+        <form id="userForm" onsubmit="submitForm(event)">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <input class="btn" type="submit" value="Submit">
+        </form>
+        <ul id="users"></ul>
+
+        <script>
+            function getSavedAppointments() {
+                axios.get("https://crudcrud.com/api/caefc489c634421d83fb61d8ebcdeb4d/apptDetails")
+                    .then(response => {
+                        const appointments = response.data;
+                        for (let i = 0; i < appointments.length; i++) {
+                            const appointment = appointments[i];
+                            displayUseronScreen(appointment);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching appointments:', error);
+                    });
+            }
+
+            function store(name, email) {
+                var myObject = { name, email };
+
+                axios.post("https://crudcrud.com/api/caefc489c634421d83fb61d8ebcdeb4d/apptDetails", myObject)
+                    .then(response => {
+                        myObject._id = response.data._id;
+                        displayUseronScreen(myObject);
+                        clearForm();
+                    })
+                    .catch(error => {
+                        console.error('Error storing user:', error);
+                    });
+            }
+
+            function displayUseronScreen(myObject) {
+                const parentElement = document.getElementById('users');
+                const childElement = document.createElement('li');
+                childElement.textContent = `${myObject.name} - ${myObject.email}`;
+
+                var editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.style.cursor = 'pointer';
+                editButton.onclick = () => {
+                    populateForm(myObject);
+                };
+
+                childElement.appendChild(editButton);
+                parentElement.appendChild(childElement);
+            }
+
+            function populateForm(userDetails) {
+                document.getElementById('name').value = userDetails.name;
+                document.getElementById('email').value = userDetails.email;
+                document.getElementById('userForm').dataset.id = userDetails._id;
+            }
+
+            function submitForm(event) {
+                event.preventDefault();
+                var _id = document.getElementById('userForm').dataset.id;
+                var name = document.getElementById('name').value;
+                var email = document.getElementById('email').value;
+
+                if (_id) {
+                    // If _id exists, update existing user
+                    var updatedObject = { name, email };
+
+                    axios.put(`https://crudcrud.com/api/caefc489c634421d83fb61d8ebcdeb4d/apptDetails/${_id}`, updatedObject)
+                        .then(response => {
+                            const parentElement = document.getElementById('users');
+                            const childElement = parentElement.querySelector(`[data-id="${_id}"]`);
+                            childElement.textContent = `${name} - ${email}`;
+                            clearForm();
+                        })
+                        .catch(error => {
+                            console.error('Error updating user details:', error);
+                        });
+                } else {
+                    // If _id doesn't exist, create a new user
+                    store(name, email);
+                }
+            }
+
+            function clearForm() {
+                document.getElementById('userForm').reset();
+                document.getElementById('userForm').removeAttribute('data-id');
+            }
+        </script>
+    </section>
+</body>
+
+</html>
