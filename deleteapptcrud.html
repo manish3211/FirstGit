@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Booking Appointment App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.5/axios.min.js"></script>
+</head>
+<body onload="getSavedAppointments()">
+    <header>
+        <h1>Booking Appointment App</h1>
+    </header>
+    <section class="container">
+        <form onsubmit="store(event)">
+            <div class="msg"></div>
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <input class="btn" type="submit" value="Submit">
+        </form>
+        <ul id="users"></ul>
+    </section>
+
+    <script>
+        function getSavedAppointments() {
+            axios.get("https://crudcrud.com/api/caefc489c634421d83fb61d8ebcdeb4d/apptDetails")
+                .then(response => {
+                    const appointments = response.data;
+                    for (let i = 0; i < appointments.length; i++) {
+                        const appointment = appointments[i];
+                        displayUseronScreen(appointment);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching appointments:', error);
+                });
+        }
+
+        function store(event) {
+            event.preventDefault();
+            var name = event.target.name.value;
+            var email = event.target.email.value;
+
+            var myObject = {
+                name,
+                email,
+            };
+
+            axios.post("https://crudcrud.com/api/caefc489c634421d83fb61d8ebcdeb4d/apptDetails", myObject)
+                .then(response => {
+                    myObject._id = response.data._id; // Save the _id received from the server
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.error('Error storing user:', error);
+                });
+
+            displayUseronScreen(myObject);
+        }
+
+        function deleteAppointment(_id, childElement) {
+            axios.delete("https://crudcrud.com/api/caefc489c634421d83fb61d8ebcdeb4d/apptDetails/" + _id)
+                .then(response => {
+                    console.log(response.data);
+                    const parentElement = document.getElementById('users');
+                    parentElement.removeChild(childElement); // Remove the user from the UI after successful deletion
+                })
+                .catch(error => {
+                    console.error('Error deleting user:', error);
+                });
+        }
+
+        function displayUseronScreen(myObject) {
+            const parentElement = document.getElementById('users');
+            const childElement = document.createElement('li');
+            childElement.textContent = myObject.name + '-' + myObject.email;
+
+            
+            childElement.dataset.id = myObject._id;
+
+            var deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-button'); 
+            deleteButton.textContent = 'Delete'; 
+            deleteButton.style.cursor = 'pointer';
+            deleteButton.onclick = () => {
+                deleteAppointment(myObject._id, childElement);
+            };
+
+            childElement.appendChild(deleteButton);
+            parentElement.appendChild(childElement);
+        }
+    </script>
+</body>
+</html>
