@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce website using CRUD</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1>E-commerce Products</h1>
+        <form id="productForm">
+            <label for="productName">Product Name:</label>
+            <input type="text" id="productName" required>
+            <label for="productPrice">Product Price:</label>
+            <input type="number" id="productPrice" required>
+            <label for="productCategory">Choose a Category:</label>
+            <select id="productCategory">
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="books">Books</option>
+                <option value="skincare">Skincare</option>
+                <option value="homeappliances">Home Appliances</option>
+                <option value="furniture">Furniture</option>
+                <option value="toys">Toys</option>
+                <option value="sports">Sports</option>
+            </select>
+            <button type="button" onclick="addProduct()">Add Product</button>
+        </form>
+        <ul id="productList"></ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.5/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+
+            loadLocalStorageProducts();
+        });
+
+       
+        const apiUrl ='https://crudcrud.com/api/edc41e23abc24b5882612170cc6fa508/products';
+
+        
+        function addProduct() {
+            const productName = document.getElementById('productName').value;
+            const productPrice = document.getElementById('productPrice').value;
+            const productCategory = document.getElementById('productCategory').value;
+
+            if (productName && productPrice && productCategory) {
+                const newProduct = { name: productName, price: productPrice, category: productCategory };
+
+                
+                axios.post(apiUrl, newProduct)
+                    .then(() => {
+                        document.getElementById('productName').value = '';
+                        document.getElementById('productPrice').value = '';
+                        document.getElementById('productCategory').value = '';
+
+                        
+                        fetchProducts();
+                    })
+                    .catch(error => console.error('Error adding product:', error));
+            }
+        }
+
+        
+        function fetchProducts() {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+
+            
+            axios.get(apiUrl)
+                .then(response => {
+                    response.data.forEach(product => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `${product.category} - ${product.name} - $${product.price} <button onclick="editProduct('${product._id}')">Edit Product</button> <button onclick="deleteProduct('${product._id}')">Delete Product</button><br>`;
+                        productList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+
+        
+        function editProduct(productId) {
+            const newName = prompt('Enter the new product name:');
+            const newPrice = prompt('Enter the new product price:');
+
+            if (newName !== null && newPrice !== null) {
+                const updatedProduct = { name: newName, price: newPrice };
+
+                
+                axios.put(`${apiUrl}/${productId}`, updatedProduct)
+                    .then(() => {
+                        fetchProducts();
+                    })
+                    .catch(error => console.error('Error updating product:', error));
+            }
+        }
+
+        
+        function deleteProduct(productId) {
+            axios.delete(`${apiUrl}/${productId}`)
+                .then(() => {
+                    fetchProducts();
+                })
+                .catch(error => console.error('Error deleting product:', error));
+        }
+
+        
+        function loadLocalStorageProducts() {
+            const localStorageProducts = JSON.parse(localStorage.getItem('products')) || [];
+
+            
+            localStorageProducts.forEach(product => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `${product.name} - $${product.price}`;
+                document.getElementById('productList').appendChild(listItem);
+            });
+        }
+
+        
+        function saveLocalStorageProducts(products) {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+    </script>
+</body>
+
+</html>
